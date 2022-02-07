@@ -3190,6 +3190,19 @@ e=>this._OnJobWorkerMessage(e)}catch(err){this._hadErrorCreatingWorker=true;this
 
 {
 self["C3_Shaders"] = {};
+self["C3_Shaders"]["lighten"] = {
+	glsl: "varying mediump vec2 vTex;\nuniform lowp sampler2D samplerFront;\nuniform mediump vec2 srcStart;\nuniform mediump vec2 srcEnd;\nuniform lowp sampler2D samplerBack;\nuniform mediump vec2 destStart;\nuniform mediump vec2 destEnd;\nvoid main(void)\n{\nlowp vec4 front = texture2D(samplerFront, vTex);\nfront.rgb /= front.a;\nmediump vec2 tex = (vTex - srcStart) / (srcEnd - srcStart);\nlowp vec4 back = texture2D(samplerBack, mix(destStart, destEnd, tex));\nback.rgb /= back.a;\nfront.rgb = max(front.rgb, back.rgb) * front.a;\ngl_FragColor = front * back.a;\n}",
+	wgsl: "%%SAMPLERFRONT_BINDING%% var samplerFront : sampler;\n%%TEXTUREFRONT_BINDING%% var textureFront : texture_2d<f32>;\n%%SAMPLERBACK_BINDING%% var samplerBack : sampler;\n%%TEXTUREBACK_BINDING%% var textureBack : texture_2d<f32>;\n%%C3PARAMS_STRUCT%%\n%%C3_UTILITY_FUNCTIONS%%\n%%FRAGMENTINPUT_STRUCT%%\n%%FRAGMENTOUTPUT_STRUCT%%\n[[stage(fragment)]]\nfn main(input : FragmentInput) -> FragmentOutput\n{\nvar front : vec4<f32> = c3_unpremultiply(textureSample(textureFront, samplerFront, input.fragUV));\nvar back : vec4<f32> = c3_unpremultiply(textureSample(textureBack, samplerBack, c3_getBackUV(input.fragUV)));\nvar output : FragmentOutput;\noutput.color = vec4<f32>(\nmax(front.rgb, back.rgb) * front.a,\nfront.a\n) * back.a;\nreturn output;\n}",
+	blendsBackground: true,
+	usesDepth: false,
+	extendBoxHorizontal: 0,
+	extendBoxVertical: 0,
+	crossSampling: false,
+	mustPreDraw: false,
+	preservesOpaqueness: false,
+	animated: false,
+	parameters: []
+};
 
 }
 
@@ -4261,8 +4274,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Acts.CreateObject,
 		C3.Plugins.System.Cnds.Every,
 		C3.Plugins.System.Exps.random,
-		C3.Plugins.System.Exps.layerscalerate,
 		C3.Behaviors.TileMovement.Acts.SimulateControl,
+		C3.Plugins.System.Exps.layerscalerate,
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Plugins.Mouse.Cnds.OnObjectClicked,
 		C3.Plugins.System.Acts.RestartLayout,
@@ -4315,6 +4328,8 @@ self.C3_JsPropNameTable = [
 	{FondoEnMosaico2: 0},
 	{Sprite11: 0},
 	{Sprite12: 0},
+	{Sprite13: 0},
+	{Sprite14: 0},
 	{Level1: 0}
 ];
 }
@@ -4448,14 +4463,15 @@ self.C3_ExpressionFuncs = [
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(1700);
 		},
-		p => {
-			const f0 = p._GetNode(0).GetBoundMethod();
-			return () => f0(1020);
-		},
+		() => 100,
 		() => 20,
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
 			return () => f0(1200);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(1020);
 		},
 		() => 5,
 		() => 300,
