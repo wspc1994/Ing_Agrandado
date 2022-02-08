@@ -4284,7 +4284,8 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.CompareVar,
 		C3.Plugins.System.Acts.NextPrevLayout,
 		C3.Plugins.Audio.Acts.StopAll,
-		C3.Plugins.System.Acts.Wait
+		C3.Plugins.System.Acts.Wait,
+		C3.Plugins.System.Acts.GoToLayout
 	];
 };
 self.C3_JsPropNameTable = [
@@ -4330,6 +4331,13 @@ self.C3_JsPropNameTable = [
 	{Sprite12: 0},
 	{Sprite13: 0},
 	{Sprite14: 0},
+	{FondoEnMosaico3: 0},
+	{Texto3: 0},
+	{FondoEnMosaico4: 0},
+	{Sprite15: 0},
+	{Sprite16: 0},
+	{Sprite17: 0},
+	{Sprite18: 0},
 	{Level1: 0}
 ];
 }
@@ -4474,7 +4482,7 @@ self.C3_ExpressionFuncs = [
 			return () => f0(1020);
 		},
 		() => 5,
-		() => 300,
+		() => 150,
 		() => 2
 ];
 
